@@ -1,3 +1,5 @@
+`react-native log-android`
+
 `npm install react-native-gesture-handler`
 
 `react-native link react-native-gesture-handler`

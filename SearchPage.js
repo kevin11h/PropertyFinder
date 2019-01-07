@@ -17,7 +17,23 @@ export default class SearchPage extends Component<Props> {
 		title: 'Property Finder',
 	};
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			searchString: 'london'
+		};
+	}
+
+	_onSearchTextChanged = (event) => {
+		console.log('_onSearchTextChanged');
+		this.setState({searchString: event.nativeEvent.text});
+		console.log('Current: ' + this.state.searchString + 
+			', Next: ' + event.nativeEvent.text);
+	}
+
 	render() {
+		console.log('SearchPage.render');
+
 		return (
 			<View style={styles.container}>
 				<Text style={styles.description}>
@@ -30,11 +46,13 @@ export default class SearchPage extends Component<Props> {
 
 				<View style={styles.flowRight} >
 					<TextInput
+						onChange={this._onSearchTextChanged}
 						underlineColorAndroid={'transparent'}
 						style={styles.searchInput}
+						value={this.state.searchString}
 						placeholder='Search via name or postcode'/>
 
-						<Button
+												<Button
 							onPress={()=>{}}
 							color="#48BBEC"
 							title='Go'/>
