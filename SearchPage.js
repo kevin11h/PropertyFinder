@@ -11,6 +11,27 @@ import {
 	Image
 } from 'react-native';
 
+function urlForQueryAndPage(key, value, pageNumber) {
+	const data = {
+		country: 'uk',
+		pretty: '1',
+		encoding: 'json',
+		listing_type: 'buy',
+		action: 'search_listings',
+		page: pageNumber
+	}
+
+	data[key] = value;
+
+	const queryString = Object.keys(data)
+		.map(key => key + '=' + encodeURIComponent(data[key]))
+		.join('&');
+
+	return 'https://api.nestoria.co.uk/api?' + queryString;
+};
+
+
+
 type Props = {};
 export default class SearchPage extends Component<Props> {
 	static navigationOptions = {
@@ -20,7 +41,9 @@ export default class SearchPage extends Component<Props> {
 	constructor(props) {
 		super(props);
 		this.state = {
-			searchString: 'london'
+			searchString: 'london',
+			isLoading: 'false',
+			message: ''
 		};
 	}
 
@@ -31,7 +54,44 @@ export default class SearchPage extends Component<Props> {
 			', Next: ' + event.nativeEvent.text);
 	}
 
+	_executeQuery = (query) => {
+		console.log(query);
+		this.setState({ isLoading: true });
+
+		fetch(query)
+			.then(response => response.json())
+			.then(json => this._handleResponse(json.response))
+			.catch(error =>
+				this.setState({
+					isLoading: false,
+					message: 'Something bad happened ' + error
+				}));
+	}
+
+	_handleResponse = (response) => {
+
+		this.setState({ isLoading: false, message: ' '});
+
+		if (response.application_response_code.substr(0, 1) === '1') {
+			// console.log('Results', {listings: response.listings});
+			this.props.navigation.navigate(
+				'Results', {listings: response.listings});
+		}
+		else {
+			this.setState({ message: 'Location not recognized; please try again.' });
+		}
+	};
+
+	_onSearchPressed = () => {
+		const query = urlForQueryAndPage('place_name', this.state.searchString, 1);
+		this._executeQuery(query);		
+	};
+
 	render() {
+
+		const spinner = this.state.isLoading ?
+			<ActivityIndicator size='large' /> : null;
+
 		console.log('SearchPage.render');
 
 		return (
@@ -53,7 +113,7 @@ export default class SearchPage extends Component<Props> {
 						placeholder='Search via name or postcode'/>
 
 												<Button
-							onPress={()=>{}}
+							onPress={this._onSearchPressed}
 							color="#48BBEC"
 							title='Go'/>
 
@@ -61,7 +121,15 @@ export default class SearchPage extends Component<Props> {
 
 				<Image source={require('./Resources/house.png')}
 				style={styles.image}/>
+
+				{spinner}
+
+				<Text style={styles.description}>{this.state.message}</Text>
+
+
 			</View>
+
+
 		);
 	}
 }

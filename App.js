@@ -10,6 +10,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View } from 'react-native';
 'use strict';
 import SearchPage from './SearchPage';
+import SearchResults from './SearchResults';
 
 import {
 	createStackNavigator,
@@ -33,6 +34,7 @@ type Props = {};
 
 const App = createStackNavigator({
 		Home: { screen: SearchPage },
+		Results: {screen: SearchResults}
 });
 
 export default createAppContainer(App);
