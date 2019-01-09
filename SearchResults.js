@@ -65,10 +65,10 @@ export default class SearchResults extends Component<Props> {
 				onPressItem={this._onPressItem}
 			/>
 		);
+	};
 
-		_onPressItem = (index) => {
+	_onPressItem = (index) => {
 			console.log("Pressed row: " + index);
-		};
 	};
 
 	render() {
